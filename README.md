@@ -59,10 +59,11 @@ git clone https://github.com/Joedson-P/projeto-ml-classificacao.git
 cd projeto-ml-classificacao
 # Recomendado: Crie e ative um ambiente virtual (venv ou conda)
 pip install -r requirements.txt
+```
 
 ### 2. Fluxo de Reprodução (Notebooks)
 Para reproduzir toda a análise, modelagem, otimização e serialização do modelo, execute os notebooks na sequência:
 
-1.  **`notebooks/01_EDA_feature_engineering.ipynb`**: Carregamento e  EDA.
-2.  **`notebooks/02_RandomForest_Performance.ipynb`**: Treinamento da *baseline* (Regressão Logística) e seleção do modelo (Random Forest).
+1.  **`notebooks/01_EDA_feature_engineering.ipynb`**: Carregamento, EDA e treinamento da *baseline*.
+2.  **`notebooks/02_RandomForest_Performance.ipynb`**: Seleção e avaliação do modelo Random Forest.
 3.  **`notebooks/3_hyperparameter_optimization.ipynb`**: Otimização do Random Forest e salvamento do artefato final (`rf_pipeline.pkl`).
