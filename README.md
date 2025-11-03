@@ -2,32 +2,67 @@
 
 ## Visão Geral do Projeto
 
-Este projeto de Machine Learning se concentra na construção e otimização de modelos de classificação para prever a probabilidade de um cliente de uma instituição bancária portuguesa **assinar um depósito a prazo**. O foco principal é a otimização da métrica de negócio **Recall** (captação de clientes 'yes').
+Este projeto implementa um fluxo de trabalho completo de Machine Learning (MLOps) para prever se um cliente de uma campanha de marketing bancário irá **subscrever um depósito a prazo** ('yes'/'no').
 
-## Objetivos Concluídos
+O objetivo principal de negócio foi **maximizar o Recall** (taxa de captação) para atingir uma **meta mínima de 60%**.
 
-1.  **Pré-Processamento Rigoroso:** Realizado com Engenharia de Features, tratamento de 'unknowns' e criação de um **Pipeline (ColumnTransformer)** utilizando Classes Customizadas (POO) para garantir reprodutibilidade.
-2.  **Modelagem e Otimização:** Implementação e comparação de modelos **Regressão Logística** (Baseline) e **Random Forest**.
-3.  **Validação Estratégica:** Otimização de limiar (threshold) para maximizar o Recall da classe minoritária ('yes').
+O projeto utiliza um pipeline robusto, testes de unidade e o modelo **Random Forest** otimizado.
 
-## Modelo Vencedor: Random Forest Otimizado
+---
 
-O modelo Random Forest Otimizado foi o vencedor, superando o Recall de 50% da *baseline* Logística.
+## Resultados Finais do Modelo Otimizado
 
-| Métrica | Logística Otimizada (Baseline) | Random Forest Otimizado |
-| :--- | :--- | :--- |
-| **AUC-ROC** | $0.8909$ | **$0.9278$** |
-| **Recall (Classe 'yes')** | $0.50$ | **$0.60$** |
-| **Precisão (Classe 'yes')**| $0.57$ | **$0.57$** |
-| **Limiar Utilizado** | $0.2912$ | **$0.3333$** |
+A otimização de hiperparâmetros (via `RandomizedSearchCV`) e o ajuste de limiar foram cruciais para levar o Recall além da meta de 60%.
 
-### Insights de Negócio
+| Métrica | Logística Otimizada (Baseline) | RF Padrão (Limiar 0.33) | **RF FINAL Otimizado (Limiar 0.6239)** |
+| :--- | :--- | :--- | :--- |
+| **Recall (Captação)** | 0.50 | 0.60 | **0.65** |
+| **Precision** | 0.57 | 0.57 | **0.51** |
+| **AUC-ROC** | 0.8909 | 0.9278 | **0.9131** |
 
-* O modelo final garante $\mathbf{60\%}$ de captação dos clientes que subscreveriam, um aumento de $\mathbf{10}$ pontos percentuais em relação à *baseline*.
-* As *features* mais relevantes para a predição são: **Duração da Última Chamada (duration - *com ressalvas sobre vazamento de dados*)**, **Balanço Anual (balance)**, e **Idade (age)**.
+### Insights de Negócio:
 
-## 💾 Dataset
+* **Meta Superada:** O modelo final garante $\mathbf{65\%}$ de captação, um aumento de **15 pontos percentuais** em relação à *baseline* (Logística Otimizada).
+* **Trade-off Aceito:** A pequena redução na Precisão (de 0.57 para 0.51) é aceita, pois o ganho de 5 pontos percentuais em Recall (volume de captação) compensa o custo de contatar mais Falsos Positivos.
+
+---
+
+## Engenharia de Features e MLOps
+
+O projeto está estruturado para produção, destacando as seguintes práticas de engenharia:
+
+1.  **Pipeline Completo:** O pré-processamento é encapsulado em um `ColumnTransformer` usando **Classes Customizadas (POO)** (`BinaryMapper`, `MonthMapper`) em `src/features/`.
+2.  **Otimização:** Uso do `RandomizedSearchCV` com *scoring* focado em `recall` e ajuste de limiar no *deployment*.
+3.  **Serialização:** O artefato final de produção (Pré-processador + Random Forest) foi salvo como `rf_pipeline.pkl` via `joblib`.
+
+## Testes e Qualidade de Código (CI)
+
+A qualidade é garantida por:
+* **Testes de Unidade:** Arquivos em `tests/` verificam a lógica dos `custom_transformers` usando **Pytest**.
+* **Integração Contínua (CI):** O *workflow* no `.github/workflows/ci.yml` executa os testes automaticamente em todo *push* para garantir que o *build* não quebre.
+
+## Dataset
 
 O conjunto de dados utilizado é referente a campanhas de *marketing* direto de uma instituição bancária.
 
 * **Fonte:** [Conjunto de Dados de Marketing Bancário no Kaggle](https://www.kaggle.com/datasets/dharmik34/bank-term-deposit-subscription?resource=download)
+
+---
+
+## Setup e Reprodução do Projeto
+
+Para replicar o ambiente e a análise completa, siga os passos abaixo:
+
+### 1. Clonar e Instalar Dependências
+```bash
+git clone https://github.com/Joedson-P/projeto-ml-classificacao.git
+cd projeto-ml-classificacao
+# Recomendado: Crie e ative um ambiente virtual (venv ou conda)
+pip install -r requirements.txt
+
+### 2. Fluxo de Reprodução (Notebooks)
+Para reproduzir toda a análise, modelagem, otimização e serialização do modelo, execute os notebooks na sequência:
+
+1.  **`notebooks/01_EDA_feature_engineering.ipynb`**: Carregamento e  EDA.
+2.  **`notebooks/02_RandomForest_Performance.ipynb`**: Treinamento da *baseline* (Regressão Logística) e seleção do modelo (Random Forest).
+3.  **`notebooks/3_hyperparameter_optimization.ipynb`**: Otimização do Random Forest e salvamento do artefato final (`rf_pipeline.pkl`).
