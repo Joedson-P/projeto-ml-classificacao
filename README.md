@@ -22,7 +22,7 @@ A otimização de hiperparâmetros (via `RandomizedSearchCV`) e o ajuste de limi
 
 ### Insights de Negócio:
 
-* **Meta Superada:** O modelo final garante $\mathbf{65%}$ de captação, um aumento de **15 pontos percentuais** em relação à *baseline* (Logística Otimizada).
+* **Meta Superada:** O modelo final garante **65%** de captação, um aumento de **15 pontos percentuais** em relação à *baseline* (Logística Otimizada).
 * **Trade-off Aceito:** A pequena redução na Precisão (de 0.57 para 0.51) é aceita, pois o ganho de 5 pontos percentuais em Recall (volume de captação) compensa o custo de contatar mais Falsos Positivos.
 
 ---
